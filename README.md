@@ -2,9 +2,9 @@ Getting a Github Access token
 -----------------------------
 
 I tested this on github enterprise, so steps may vary slightly with the github api.
-NOTE: <url> listed below should be changed to relevant github api url.
+NOTE: \<url\> listed below should be changed to relevant github api url.
 
-curl -k -u '<github-username>:<github-password>' -d '{"scopes":["repo", "user"],"note":"test?"}' https://<url>/authorizations
+curl -k -u '\<github-username\>:\<github-password\>' -d '{"scopes":["repo", "user"],"note":"test?"}' https://\<url\>/authorizations
 
 This will return a json blob, where one of the keys will be token.
 
@@ -16,13 +16,14 @@ Installation
 
 
 {
-	"user": <your github name>,
-	"token": <your github token>,
-	"github_url": <the github url of the github instance you are using>
+	"user": \<your github name\>,
+	"token": \<your github token\>,
+	"github_url": \<the github url of the github instance you are using\> 
 }
 
 
 You will now have the following command available:
+
 git pull\_request
 
 It takes a number of commandline arguments:
