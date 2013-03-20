@@ -39,10 +39,11 @@ def create_pull_request(options, user, token,
             'Content-Type': 'application/json'}
     data = {
             "title": options.title,
-            "body": options.body,
             "base": options.base,
             "head": options.head
     }
+	if options.body:
+		data["body"] = options.body
     response = requests.post(GITHUB_PULL_URL, headers=headers,
             data=json.dumps(data), verify=False)
     if response.status_code not in range(200, 299):
