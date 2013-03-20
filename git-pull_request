@@ -1,0 +1,71 @@
+#!/usr/bin/python2.7
+
+import json
+import os
+import requests
+
+from optparse import OptionParser
+from subprocess import Popen, PIPE
+
+
+GITHUB_PULL_URL = (
+    "%s/repos/Demonware/webzone/pulls")
+
+
+def get_curr_branch_name():
+    p = Popen(["git", "rev-parse", "--abbrev-ref", "HEAD"], stdout=PIPE)
+    curr_branch_name, _ = p.communicate()
+    return curr_branch_name.strip()
+
+
+def retrieve_config(filename):
+    # gets home directory of user
+    home = os.path.expanduser("~")
+    path = os.path.join(home, filename)
+
+    if not os.path.exists(path):
+        return {}
+
+    f = open(path, "r")
+    config = json.load(f)
+    f.close()
+
+    return config
+
+
+def create_pull_request(options, user, token,
+        github_url='https://api.github.com'):
+    headers = {"Authorization": "token %s" % token,
+            'Content-Type': 'application/json'}
+    data = {
+            "title": options.title,
+            "body": options.body,
+            "base": options.base,
+            "head": options.head
+    }
+    response = requests.post(GITHUB_PULL_URL, headers=headers,
+            data=json.dumps(data), verify=False)
+    if response.status_code not in range(200, 299):
+        raise Exception("Response %d: %s" % (response.status_code,
+            response.content))
+    return response.json()
+
+
+if __name__ == "__main__":
+    parser = OptionParser()
+    parser.add_option('-t', '--title', dest='title',
+            help='title for pull request')
+    parser.add_option('--body', dest='body',
+            help='title for pull request')
+    parser.add_option('-b', '--base', dest='base', default='master',
+            help='base to diff against')
+    parser.add_option('--head', dest='head',
+            default=get_curr_branch_name(), help='head of feature branch')
+    (options, args) = parser.parse_args()
+
+    config = retrieve_config(".githubcredentials")
+    token = config["token"]
+    user = config["user"]
+    github_url = config["github_url"]
+    pull_body = create_pull_request(options, user, token, github_url)
+    print pull_body["url"]
