@@ -2,7 +2,7 @@ Getting a Github Access token
 -----------------------------
 
 I tested this on github enterprise, so steps may vary slightly with the github api.
-NOTE: \<url\> listed below should be changed to relevant github api url.
+NOTE: \<url\> listed below should be changed to relevant github api url, that's either api.github.com for GitHub and yourdomain.com/api/v3 for enterprise.
 
 curl -k -u '\<github-username\>:\<github-password\>' -d '{"scopes":["repo", "user"],"note":"test?"}' https://\<url\>/authorizations
 
