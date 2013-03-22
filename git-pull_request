@@ -52,11 +52,12 @@ def create_pull_request(options, user, token,
 
 
 if __name__ == "__main__":
-    parser = OptionParser()
+    usage = "Usage: %prog [options]"
+    parser = OptionParser(usage=usage)
     parser.add_option('-t', '--title', dest='title',
             help='title for pull request')
     parser.add_option('--body', dest='body',
-            help='title for pull request')
+            help='body for pull request')
     parser.add_option('-b', '--base', dest='base', default='master',
             help='base to diff against')
     parser.add_option('--head', dest='head',
