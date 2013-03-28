@@ -51,6 +51,13 @@ def create_pull_request(options, user, token,
     return response.json()
 
 
+def ensure_following_options(options, check_names):
+    for name in check_names:
+        if not getattr(options, name, False):
+            raise Exception("You must provide a %s" % name)
+
+
+
 if __name__ == "__main__":
     usage = "Usage: %prog [options]"
     parser = OptionParser(usage=usage)
@@ -63,7 +70,7 @@ if __name__ == "__main__":
     parser.add_option('--head', dest='head',
             default=get_curr_branch_name(), help='head of feature branch')
     (options, args) = parser.parse_args()
-
+    ensure_following_options(options, ["title", "base", "head"])
     config = retrieve_config(".githubcredentials")
     token = config["token"]
     user = config["user"]
