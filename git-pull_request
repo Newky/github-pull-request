@@ -7,6 +7,11 @@ import requests
 from optparse import OptionParser
 from subprocess import Popen, PIPE
 
+try:
+    from spawn import get_editor_output
+except ImportError:
+    get_editor_output = None
+    pass
 
 GITHUB_PULL_URL = ("%s/repos/Demonware/webzone/pulls")
 
@@ -32,12 +37,12 @@ def retrieve_config(filename):
     return config
 
 
-def create_pull_request(options, user, token,
+def create_pull_request(options, user, token, title,
                         github_url='https://api.github.com'):
     headers = {"Authorization": "token %s" % token,
             'Content-Type': 'application/json'}
     data = {
-            "title": options.title,
+            "title": title,
             "base": options.base,
             "head": options.head
     }
@@ -57,6 +62,16 @@ def ensure_following_options(options, check_names):
             raise Exception("You must provide a %s" % name)
 
 
+def if_not_then_try_spawn(title):
+    if title:
+        return title
+    if get_editor_output:
+        title = get_editor_output(
+                initial_message="Put pull request title here")
+        return title
+    else:
+        raise Exception("You must provide a title")
+
 
 if __name__ == "__main__":
     usage = "Usage: %prog [options]"
@@ -70,10 +85,11 @@ if __name__ == "__main__":
     parser.add_option('--head', dest='head',
             default=get_curr_branch_name(), help='head of feature branch')
     (options, args) = parser.parse_args()
-    ensure_following_options(options, ["title", "base", "head"])
+    title = if_not_then_try_spawn(options.title)
+    ensure_following_options(options, ["base", "head"])
     config = retrieve_config(".githubcredentials")
     token = config["token"]
     user = config["user"]
     github_url = config["github_url"]
-    pull_body = create_pull_request(options, user, token, github_url)
+    pull_body = create_pull_request(options, user, token, title, github_url)
     print pull_body["html_url"]
