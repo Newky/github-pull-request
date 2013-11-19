@@ -13,7 +13,7 @@ except ImportError:
     get_editor_output = None
     pass
 
-GITHUB_PULL_URL = ("%s/repos/Demonware/webzone/pulls")
+GITHUB_PULL_URL = ("%s/repos/%s/pulls")
 
 
 def get_curr_branch_name():
